@@ -1,0 +1,52 @@
+{
+	"name": "sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage_databag",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "New Text Document.txt",
+				"container": "sink"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "team",
+				"type": "String"
+			},
+			{
+				"name": "region",
+				"type": "String"
+			},
+			{
+				"name": "matchType",
+				"type": "String"
+			},
+			{
+				"name": "Baron",
+				"type": "String"
+			},
+			{
+				"name": "Dra",
+				"type": "String"
+			},
+			{
+				"name": "player_name",
+				"type": "String"
+			},
+			{
+				"name": "CS",
+				"type": "String"
+			}
+		]
+	}
+}

@@ -25,7 +25,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "sink_out",
+						"referenceName": "sink",
 						"type": "DatasetReference"
 					},
 					"name": "sink1",
@@ -141,6 +141,15 @@
 				"     skipDuplicateMapOutputs: true) ~> s1",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          team as string,",
+				"          region as string,",
+				"          matchType as string,",
+				"          Baron as string,",
+				"          Dra as string,",
+				"          player_name as string,",
+				"          CS as string",
+				"     ),",
 				"     emptyLinesAsHeader: 1,",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
