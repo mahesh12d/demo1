@@ -1,0 +1,880 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "databag-datafactors"
+		},
+		"AzureBlobStorage_databag_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage_databag'"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage_databag')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlobStorage_databag_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimed-dag')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "Central India",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false,
+							"customProperties": []
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/player')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_databag",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Game"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "02_player.csv",
+						"folderPath": "input",
+						"container": "source"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "player_name",
+						"type": "String"
+					},
+					{
+						"name": "team",
+						"type": "String"
+					},
+					{
+						"name": "region",
+						"type": "String"
+					},
+					{
+						"name": "matchType",
+						"type": "String"
+					},
+					{
+						"name": "position",
+						"type": "String"
+					},
+					{
+						"name": "kills",
+						"type": "String"
+					},
+					{
+						"name": "deaths",
+						"type": "String"
+					},
+					{
+						"name": "assists",
+						"type": "String"
+					},
+					{
+						"name": "CS",
+						"type": "String"
+					},
+					{
+						"name": "gold",
+						"type": "String"
+					},
+					{
+						"name": "damage",
+						"type": "String"
+					},
+					{
+						"name": "tanking",
+						"type": "String"
+					},
+					{
+						"name": "matches_played",
+						"type": "String"
+					},
+					{
+						"name": "matches_won",
+						"type": "String"
+					},
+					{
+						"name": "minutes_played",
+						"type": "String"
+					},
+					{
+						"name": "matches_lose",
+						"type": "String"
+					},
+					{
+						"name": "win_rate",
+						"type": "String"
+					},
+					{
+						"name": "kills_per_game",
+						"type": "String"
+					},
+					{
+						"name": "deaths_per_game",
+						"type": "String"
+					},
+					{
+						"name": "assists_per_game",
+						"type": "String"
+					},
+					{
+						"name": "CS_per_minute",
+						"type": "String"
+					},
+					{
+						"name": "gold_per_minute",
+						"type": "String"
+					},
+					{
+						"name": "damage_per_game",
+						"type": "String"
+					},
+					{
+						"name": "tanking_per_game",
+						"type": "String"
+					},
+					{
+						"name": "KDA",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sink_out')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_databag",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "rgm_details.csv",
+						"folderPath": "output",
+						"container": "sink"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source_1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_databag",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "01_team.csv",
+						"folderPath": "input",
+						"container": "source"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Index",
+						"type": "String"
+					},
+					{
+						"name": "Customer Id",
+						"type": "String"
+					},
+					{
+						"name": "First Name",
+						"type": "String"
+					},
+					{
+						"name": "Last Name",
+						"type": "String"
+					},
+					{
+						"name": "Company",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "Phone 1",
+						"type": "String"
+					},
+					{
+						"name": "Phone 2",
+						"type": "String"
+					},
+					{
+						"name": "Email",
+						"type": "String"
+					},
+					{
+						"name": "Subscription Date",
+						"type": "String"
+					},
+					{
+						"name": "Website",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/source_2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_databag",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "02_player.csv",
+						"folderPath": "input",
+						"container": "source"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Index",
+						"type": "String"
+					},
+					{
+						"name": "Customer Id",
+						"type": "String"
+					},
+					{
+						"name": "First Name",
+						"type": "String"
+					},
+					{
+						"name": "Last Name",
+						"type": "String"
+					},
+					{
+						"name": "Company",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "Country",
+						"type": "String"
+					},
+					{
+						"name": "Phone 1",
+						"type": "String"
+					},
+					{
+						"name": "Phone 2",
+						"type": "String"
+					},
+					{
+						"name": "Email",
+						"type": "String"
+					},
+					{
+						"name": "Subscription Date",
+						"type": "String"
+					},
+					{
+						"name": "Website",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/team')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage_databag",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Game"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "01_team.csv",
+						"folderPath": "input",
+						"container": "source"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "team",
+						"type": "String"
+					},
+					{
+						"name": "region",
+						"type": "String"
+					},
+					{
+						"name": "matchType",
+						"type": "String"
+					},
+					{
+						"name": "Baron",
+						"type": "String"
+					},
+					{
+						"name": "Dra",
+						"type": "String"
+					},
+					{
+						"name": "Turts",
+						"type": "String"
+					},
+					{
+						"name": "kills",
+						"type": "String"
+					},
+					{
+						"name": "deaths",
+						"type": "String"
+					},
+					{
+						"name": "assists",
+						"type": "String"
+					},
+					{
+						"name": "CS",
+						"type": "String"
+					},
+					{
+						"name": "gold",
+						"type": "String"
+					},
+					{
+						"name": "damage",
+						"type": "String"
+					},
+					{
+						"name": "tanking",
+						"type": "String"
+					},
+					{
+						"name": "matches_played",
+						"type": "String"
+					},
+					{
+						"name": "matches_won",
+						"type": "String"
+					},
+					{
+						"name": "minutes_played",
+						"type": "String"
+					},
+					{
+						"name": "matches_lose",
+						"type": "String"
+					},
+					{
+						"name": "win_rate",
+						"type": "String"
+					},
+					{
+						"name": "Baron_per_game",
+						"type": "String"
+					},
+					{
+						"name": "Dra_per_game",
+						"type": "String"
+					},
+					{
+						"name": "Turts_per_game",
+						"type": "String"
+					},
+					{
+						"name": "kills_per_game",
+						"type": "String"
+					},
+					{
+						"name": "deaths_per_game",
+						"type": "String"
+					},
+					{
+						"name": "assists_per_game",
+						"type": "String"
+					},
+					{
+						"name": "CS_per_minute",
+						"type": "String"
+					},
+					{
+						"name": "gold_per_minute",
+						"type": "String"
+					},
+					{
+						"name": "damage_per_game",
+						"type": "String"
+					},
+					{
+						"name": "tanking_per_game",
+						"type": "String"
+					},
+					{
+						"name": "KDA",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_flow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "source_1",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "source_2",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sink_out",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "AzureBlobStorage_databag",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "filter1",
+							"description": "all data from source1 only with no intersection"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "select1s"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          team as string,",
+						"          region as string,",
+						"          matchType as string,",
+						"          Baron as short,",
+						"          Dra as short,",
+						"          Turts as short,",
+						"          kills as short,",
+						"          deaths as short,",
+						"          assists as short,",
+						"          CS as integer,",
+						"          gold as integer,",
+						"          damage as double,",
+						"          tanking as double,",
+						"          matches_played as short,",
+						"          matches_won as short,",
+						"          minutes_played as double,",
+						"          matches_lose as short,",
+						"          win_rate as double,",
+						"          Baron_per_game as double,",
+						"          Dra_per_game as double,",
+						"          Turts_per_game as double,",
+						"          kills_per_game as double,",
+						"          deaths_per_game as double,",
+						"          assists_per_game as double,",
+						"          CS_per_minute as double,",
+						"          gold_per_minute as double,",
+						"          damage_per_game as double,",
+						"          tanking_per_game as double,",
+						"          KDA as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          player_name as string,",
+						"          team as string,",
+						"          region as string,",
+						"          matchType as string,",
+						"          position as string,",
+						"          kills as short,",
+						"          deaths as short,",
+						"          assists as short,",
+						"          CS as short,",
+						"          gold as integer,",
+						"          damage as double,",
+						"          tanking as double,",
+						"          matches_played as short,",
+						"          matches_won as short,",
+						"          minutes_played as double,",
+						"          matches_lose as short,",
+						"          win_rate as double,",
+						"          kills_per_game as double,",
+						"          deaths_per_game as double,",
+						"          assists_per_game as double,",
+						"          CS_per_minute as double,",
+						"          gold_per_minute as double,",
+						"          damage_per_game as double,",
+						"          tanking_per_game as double,",
+						"          KDA as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source2",
+						"select1s, select2 join(select1s@matchType == select2@matchType,",
+						"     joinType:'left',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 filter(isNull(select2@matchType)) ~> filter1",
+						"source2 select(mapColumn(",
+						"          player_name,",
+						"          team,",
+						"          region,",
+						"          matchType",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"source1 select(mapColumn(",
+						"          matchType,",
+						"          Baron,",
+						"          Dra",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1s",
+						"filter1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     emptyLinesAsHeader: 1,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/source_1')]",
+				"[concat(variables('factoryId'), '/datasets/source_2')]",
+				"[concat(variables('factoryId'), '/datasets/sink_out')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/game_df_so1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"folder": {
+					"name": "game_DF"
+				},
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "team",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "player",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sink_out",
+								"type": "DatasetReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "AzureBlobStorage_databag",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "filter1",
+							"description": "all data from source1 only with no intersection"
+						},
+						{
+							"name": "s2"
+						},
+						{
+							"name": "s1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          team as string,",
+						"          region as string,",
+						"          matchType as string,",
+						"          Baron as short,",
+						"          Dra as short,",
+						"          Turts as short,",
+						"          kills as short,",
+						"          deaths as short,",
+						"          assists as short,",
+						"          CS as integer,",
+						"          gold as integer,",
+						"          damage as double,",
+						"          tanking as double,",
+						"          matches_played as short,",
+						"          matches_won as short,",
+						"          minutes_played as double,",
+						"          matches_lose as short,",
+						"          win_rate as double,",
+						"          Baron_per_game as double,",
+						"          Dra_per_game as double,",
+						"          Turts_per_game as double,",
+						"          kills_per_game as double,",
+						"          deaths_per_game as double,",
+						"          assists_per_game as double,",
+						"          CS_per_minute as double,",
+						"          gold_per_minute as double,",
+						"          damage_per_game as double,",
+						"          tanking_per_game as double,",
+						"          KDA as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source(output(",
+						"          player_name as string,",
+						"          team as string,",
+						"          region as string,",
+						"          matchType as string,",
+						"          position as string,",
+						"          kills as string,",
+						"          deaths as string,",
+						"          assists as string,",
+						"          CS as string,",
+						"          gold as string,",
+						"          damage as string,",
+						"          tanking as string,",
+						"          matches_played as string,",
+						"          matches_won as string,",
+						"          minutes_played as string,",
+						"          matches_lose as string,",
+						"          win_rate as string,",
+						"          kills_per_game as string,",
+						"          deaths_per_game as string,",
+						"          assists_per_game as string,",
+						"          CS_per_minute as string,",
+						"          gold_per_minute as string,",
+						"          damage_per_game as string,",
+						"          tanking_per_game as string,",
+						"          KDA as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source2",
+						"s1, s2 join(s1@matchType == s2@matchType,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 filter(length(s1@matchType)>4) ~> filter1",
+						"source2 select(mapColumn(",
+						"          player_name,",
+						"          team,",
+						"          region,",
+						"          matchType,",
+						"          CS",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> s2",
+						"source1 select(mapColumn(",
+						"          team,",
+						"          region,",
+						"          matchType,",
+						"          Baron,",
+						"          Dra",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> s1",
+						"filter1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     emptyLinesAsHeader: 1,",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/team')]",
+				"[concat(variables('factoryId'), '/datasets/player')]",
+				"[concat(variables('factoryId'), '/datasets/sink_out')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage_databag')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Pl_s01')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "game_df_so1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"source2": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/game_df_so1')]"
+			]
+		}
+	]
+}
