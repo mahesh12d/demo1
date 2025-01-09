@@ -1,0 +1,128 @@
+{
+	"name": "player",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage_databag",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Game"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "02_player.csv",
+				"folderPath": "input",
+				"container": "source"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "player_name",
+				"type": "String"
+			},
+			{
+				"name": "team",
+				"type": "String"
+			},
+			{
+				"name": "region",
+				"type": "String"
+			},
+			{
+				"name": "matchType",
+				"type": "String"
+			},
+			{
+				"name": "position",
+				"type": "String"
+			},
+			{
+				"name": "kills",
+				"type": "String"
+			},
+			{
+				"name": "deaths",
+				"type": "String"
+			},
+			{
+				"name": "assists",
+				"type": "String"
+			},
+			{
+				"name": "CS",
+				"type": "String"
+			},
+			{
+				"name": "gold",
+				"type": "String"
+			},
+			{
+				"name": "damage",
+				"type": "String"
+			},
+			{
+				"name": "tanking",
+				"type": "String"
+			},
+			{
+				"name": "matches_played",
+				"type": "String"
+			},
+			{
+				"name": "matches_won",
+				"type": "String"
+			},
+			{
+				"name": "minutes_played",
+				"type": "String"
+			},
+			{
+				"name": "matches_lose",
+				"type": "String"
+			},
+			{
+				"name": "win_rate",
+				"type": "String"
+			},
+			{
+				"name": "kills_per_game",
+				"type": "String"
+			},
+			{
+				"name": "deaths_per_game",
+				"type": "String"
+			},
+			{
+				"name": "assists_per_game",
+				"type": "String"
+			},
+			{
+				"name": "CS_per_minute",
+				"type": "String"
+			},
+			{
+				"name": "gold_per_minute",
+				"type": "String"
+			},
+			{
+				"name": "damage_per_game",
+				"type": "String"
+			},
+			{
+				"name": "tanking_per_game",
+				"type": "String"
+			},
+			{
+				"name": "KDA",
+				"type": "String"
+			}
+		]
+	}
+}

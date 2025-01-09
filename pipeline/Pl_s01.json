@@ -1,9 +1,9 @@
 {
-	"name": "pl_demo",
+	"name": "Pl_s01",
 	"properties": {
 		"activities": [
 			{
-				"name": "DF_demo",
+				"name": "Data flow1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -13,21 +13,21 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
+				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_flow",
+						"referenceName": "game_df_so1",
 						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
 					},
-					"traceLevel": "Coarse"
+					"traceLevel": "Fine",
+					"runConcurrently": false
 				}
 			}
 		],
-		"annotations": [],
-		"lastPublishTime": "2025-01-08T13:26:44Z"
-	},
-	"type": "Microsoft.DataFactory/factories/pipelines"
+		"annotations": []
+	}
 }
