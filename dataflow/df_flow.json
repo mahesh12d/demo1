@@ -1,0 +1,145 @@
+{
+	"name": "df_flow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "source_1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "source_2",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "sink_out",
+						"type": "DatasetReference"
+					},
+					"name": "sink1",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorage_databag",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "filter1",
+					"description": "all data from source1 only with no intersection"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "select1s"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          team as string,",
+				"          region as string,",
+				"          matchType as string,",
+				"          Baron as short,",
+				"          Dra as short,",
+				"          Turts as short,",
+				"          kills as short,",
+				"          deaths as short,",
+				"          assists as short,",
+				"          CS as integer,",
+				"          gold as integer,",
+				"          damage as double,",
+				"          tanking as double,",
+				"          matches_played as short,",
+				"          matches_won as short,",
+				"          minutes_played as double,",
+				"          matches_lose as short,",
+				"          win_rate as double,",
+				"          Baron_per_game as double,",
+				"          Dra_per_game as double,",
+				"          Turts_per_game as double,",
+				"          kills_per_game as double,",
+				"          deaths_per_game as double,",
+				"          assists_per_game as double,",
+				"          CS_per_minute as double,",
+				"          gold_per_minute as double,",
+				"          damage_per_game as double,",
+				"          tanking_per_game as double,",
+				"          KDA as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source(output(",
+				"          player_name as string,",
+				"          team as string,",
+				"          region as string,",
+				"          matchType as string,",
+				"          position as string,",
+				"          kills as short,",
+				"          deaths as short,",
+				"          assists as short,",
+				"          CS as short,",
+				"          gold as integer,",
+				"          damage as double,",
+				"          tanking as double,",
+				"          matches_played as short,",
+				"          matches_won as short,",
+				"          minutes_played as double,",
+				"          matches_lose as short,",
+				"          win_rate as double,",
+				"          kills_per_game as double,",
+				"          deaths_per_game as double,",
+				"          assists_per_game as double,",
+				"          CS_per_minute as double,",
+				"          gold_per_minute as double,",
+				"          damage_per_game as double,",
+				"          tanking_per_game as double,",
+				"          KDA as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source2",
+				"select1s, select2 join(select1s@matchType == select2@matchType,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 filter(isNull(select2@matchType)) ~> filter1",
+				"source2 select(mapColumn(",
+				"          player_name,",
+				"          team,",
+				"          region,",
+				"          matchType",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"source1 select(mapColumn(",
+				"          matchType,",
+				"          Baron,",
+				"          Dra",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1s",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     emptyLinesAsHeader: 1,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1) ~> sink1"
+			]
+		}
+	}
+}
